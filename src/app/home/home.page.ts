@@ -12,6 +12,7 @@ export class HomePage {
   public scanResult = '';
   public devicesList = [];
   public results = [];
+  public alertResponse = '';
   private wifiList: Hotspot;
 
   constructor(
@@ -59,7 +60,8 @@ export class HomePage {
           }
         }, {
           text: 'Ok',
-          handler: () => {
+          handler: (alertData) => {
+            this.alertResponse = JSON.stringify(alertData);
             console.log('Confirm Ok');
           }
         }
@@ -79,7 +81,8 @@ export class HomePage {
     this.ble.connect(macAddress).subscribe(x => {
       console.log(x);
       this.presentAlertPrompt().then(r =>
-          alert('hi'))
+          console.log("Login alert")
+      )
     });
   }
 

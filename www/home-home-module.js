@@ -139,7 +139,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button color=\"primary\" (click)=\"getNetworks()\">Get Networks</ion-button>\r\n\r\n\r\n  <ion-item>\r\n    <ion-list>\r\n      <ion-item *ngFor=\"let data of results\">\r\n        {{data.SSID}}\r\n      </ion-item>\r\n    </ion-list>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
+module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button color=\"primary\" (click)=\"getNetworks()\">Get Networks</ion-button>\r\n\r\n<ion-item>\r\n  {{alertResponse}}\r\n</ion-item>\r\n  <ion-item>\r\n    <ion-list>\r\n      <ion-item *ngFor=\"let data of results\">\r\n        {{data.SSID}}\r\n      </ion-item>\r\n    </ion-list>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
 
 /***/ }),
 
@@ -150,7 +150,7 @@ module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      Sp
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".welcome-card ion-img {\n  max-height: 35vh;\n  overflow: hidden; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvaG9tZS9DOlxcd2FtcDY0XFx3d3dcXEFuZHJvaWRcXFNwZWN0UlxcaW9uaWMtYXBwXFxibGUvc3JjXFxhcHBcXGhvbWVcXGhvbWUucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsZ0JBQWdCO0VBQ2hCLGdCQUFnQixFQUFBIiwiZmlsZSI6InNyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi53ZWxjb21lLWNhcmQgaW9uLWltZyB7XHJcbiAgbWF4LWhlaWdodDogMzV2aDtcclxuICBvdmVyZmxvdzogaGlkZGVuO1xyXG59XHJcbiJdfQ== */"
+module.exports = ".welcome-card ion-img {\n  max-height: 35vh;\n  overflow: hidden; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvaG9tZS9DOlxcd2FtcDY0XFx3d3dcXEFuZHJvaWRcXFNwZWN0UlxccGhvbmUtYXBwL3NyY1xcYXBwXFxob21lXFxob21lLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGdCQUFnQjtFQUNoQixnQkFBZ0IsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2hvbWUvaG9tZS5wYWdlLnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIud2VsY29tZS1jYXJkIGlvbi1pbWcge1xyXG4gIG1heC1oZWlnaHQ6IDM1dmg7XHJcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcclxufVxyXG4iXX0= */"
 
 /***/ }),
 
@@ -179,6 +179,7 @@ var HomePage = /** @class */ (function () {
         this.scanResult = '';
         this.devicesList = [];
         this.results = [];
+        this.alertResponse = '';
     }
     HomePage.prototype.scan = function () {
         var _this = this;
@@ -201,6 +202,7 @@ var HomePage = /** @class */ (function () {
     HomePage.prototype.presentAlertPrompt = function () {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
             var alert;
+            var _this = this;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.alertController.create({
@@ -222,7 +224,8 @@ var HomePage = /** @class */ (function () {
                                     }
                                 }, {
                                     text: 'Ok',
-                                    handler: function () {
+                                    handler: function (alertData) {
+                                        _this.alertResponse = JSON.stringify(alertData);
                                         console.log('Confirm Ok');
                                     }
                                 }
@@ -256,7 +259,7 @@ var HomePage = /** @class */ (function () {
                 this.ble.connect(macAddress).subscribe(function (x) {
                     console.log(x);
                     _this.presentAlertPrompt().then(function (r) {
-                        return alert('hi');
+                        return console.log("Login alert");
                     });
                 });
                 return [2 /*return*/];
