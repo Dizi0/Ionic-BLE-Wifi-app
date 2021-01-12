@@ -9,17 +9,13 @@
 <ion-content>
 
   <ion-button expand="full" id="disableMe" (click)="scan()">Scan bluetooth</ion-button>
-  <ion-button color="primary" (click)="getNetworks()">Get Networks</ion-button>
+  <ion-button expand="full"  color="primary" (click)="getNetworks()">Get Networks</ion-button>
 
 <ion-item>
   {{alertResponse}}
 </ion-item>
+
   <ion-item>
-    <ion-list>
-      <ion-item *ngFor="let data of results">
-        {{data.SSID}}
-      </ion-item>
-    </ion-list>
     <div *ngFor="let device of devicesList">
       <ion-card *ngIf="device.name">
         <ion-card-header>

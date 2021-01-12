@@ -139,7 +139,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button color=\"primary\" (click)=\"getNetworks()\">Get Networks</ion-button>\r\n\r\n<ion-item>\r\n  {{alertResponse}}\r\n</ion-item>\r\n  <ion-item>\r\n    <ion-list>\r\n      <ion-item *ngFor=\"let data of results\">\r\n        {{data.SSID}}\r\n      </ion-item>\r\n    </ion-list>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
+module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button expand=\"full\"  color=\"primary\" (click)=\"getNetworks()\">Get Networks</ion-button>\r\n\r\n<ion-item>\r\n  {{alertResponse}}\r\n</ion-item>\r\n\r\n  <ion-item>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
 
 /***/ }),
 
@@ -176,65 +176,87 @@ var HomePage = /** @class */ (function () {
     function HomePage(ble, alertController) {
         this.ble = ble;
         this.alertController = alertController;
+        this.deviceID = '';
         this.scanResult = '';
         this.devicesList = [];
-        this.results = [];
-        this.alertResponse = '';
+        this.uuidConfig = {
+            "deviceUUID": "27dc2bcf-6492-476a-b63a-4e419d417a9f",
+            "serviceUUID": "c640efa6-489e-4694-bfed-73ce0fa15e77",
+            "writeCharacteristicWriteUUID": "d973a488-84f8-4df0-ac83-929dd2fb3bd8",
+            "readStatusUUID": "4d549010-bc4c-401a-b9e7-ad486c99ab21",
+            "notificationUUID": "8fa7b756-4b3f-43bf-bd15-613b04025d72"
+        };
     }
+    HomePage.prototype.ab2str = function (buf) {
+        return String.fromCharCode.apply(null, new Uint16Array(buf));
+    };
+    HomePage.prototype.str2ab = function (str) {
+        var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+    };
     HomePage.prototype.scan = function () {
         var _this = this;
         document.getElementById("disableMe").disabled = true;
         this.scanResult = '';
         this.devicesList = [];
         var devices = [];
-        this.ble.scan([], 5).subscribe(function (device) {
+        this.ble.scan([], 10).subscribe(function (device) {
             _this.scanResult = JSON.stringify(device) + "." + _this.scanResult;
-            var adData = new Uint8Array(device.advertising);
-            // alert(device.name + " " + device.id + " " + device.rssi);
             devices.push(device);
             _this.devicesList = devices;
         });
         setTimeout(function () {
             document.getElementById("disableMe").disabled = false;
-            // alert(this.devicesList);
         }, 2000);
     };
-    HomePage.prototype.presentAlertPrompt = function () {
+    HomePage.prototype.presentAlertPrompt = function (macAddress) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
             var alert;
             var _this = this;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.alertController.create({
-                            cssClass: 'my-custom-class',
-                            header: 'Connect to your Wi-fi',
-                            inputs: [
-                                {
-                                    name: 'password',
-                                    placeholder: 'Password',
-                                },
-                            ],
-                            buttons: [
-                                {
-                                    text: 'Cancel',
-                                    role: 'cancel',
-                                    cssClass: 'secondary',
-                                    handler: function () {
-                                        console.log('Confirm Cancel');
-                                    }
-                                }, {
-                                    text: 'Ok',
-                                    handler: function (alertData) {
-                                        _this.alertResponse = JSON.stringify(alertData);
-                                        console.log('Confirm Ok');
-                                    }
-                                }
-                            ]
-                        })];
+                    case 0: return [4 /*yield*/, this.ble.stopScan()];
                     case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.alertController.create({
+                                cssClass: 'my-custom-class',
+                                header: 'Connect to your Wi-fi',
+                                inputs: [
+                                    {
+                                        name: 'password',
+                                        type: 'password',
+                                        placeholder: 'Password',
+                                    },
+                                ],
+                                buttons: [
+                                    {
+                                        text: 'Cancel',
+                                        role: 'cancel',
+                                        cssClass: 'secondary',
+                                        handler: function () {
+                                            _this.disconnect(_this.deviceID);
+                                            console.log('Confirm Cancel');
+                                        }
+                                    }, {
+                                        text: 'Ok',
+                                        handler: function (alertData) {
+                                            if (_this.ble.isConnected) {
+                                                console.log("WE ARE CURRENTLY CONNECTED");
+                                                var payload = _this.str2ab('freebox_57a2a7|' + alertData.password);
+                                                _this.ble.write(_this.deviceID, _this.uuidConfig.serviceUUID, _this.uuidConfig.writeCharacteristicWriteUUID, payload);
+                                            }
+                                        }
+                                    }
+                                ]
+                            })];
+                    case 2:
                         alert = _a.sent();
                         return [4 /*yield*/, alert.present()];
-                    case 2:
+                    case 3:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -242,23 +264,17 @@ var HomePage = /** @class */ (function () {
         });
     };
     HomePage.prototype.getNetworks = function () {
-        return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
-            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                this.wifiList.scanWifi().then(function (networks) {
-                    alert(networks);
-                });
-                return [2 /*return*/];
-            });
-        });
+        // this.alertResponse = this.wifiWizard2.getConnectedSSID()
     };
     HomePage.prototype.connect = function (macAddress) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
             var _this = this;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 console.log('Connect');
-                this.ble.connect(macAddress).subscribe(function (x) {
-                    console.log(x);
-                    _this.presentAlertPrompt().then(function (r) {
+                this.deviceID = macAddress;
+                this.ble.connect(macAddress).subscribe(function (deviceData) {
+                    console.log(deviceData);
+                    _this.presentAlertPrompt(macAddress).then(function (r) {
                         return console.log("Login alert");
                     });
                 });
@@ -277,6 +293,7 @@ var HomePage = /** @class */ (function () {
                     case 1:
                         x = _a.sent();
                         console.log(x);
+                        this.deviceID = '';
                         return [2 /*return*/];
                 }
             });

@@ -55,6 +55,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.WifiWizard"
       ]
+    },
+    {
+      "id": "cordova-plugin-wifi-information.wifiinformation",
+      "file": "plugins/cordova-plugin-wifi-information/www/wifiinformation.js",
+      "pluginId": "cordova-plugin-wifi-information",
+      "clobbers": [
+        "window.wifiinformation"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -65,6 +73,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-ionic-webview": "4.1.0",
     "cordova-plugin-ionic-keyboard": "2.1.3",
     "cordova-plugin-ble-central": "1.2.2",
-    "com.pylonproducts.wifiwizard": "0.2.11"
+    "com.pylonproducts.wifiwizard": "0.2.11",
+    "cordova-plugin-wifi-information": "1.1.0"
   };
 });
