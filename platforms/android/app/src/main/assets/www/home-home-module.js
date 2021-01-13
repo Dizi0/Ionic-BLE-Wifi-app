@@ -264,7 +264,6 @@ var HomePage = /** @class */ (function () {
         });
     };
     HomePage.prototype.getNetworks = function () {
-        // this.alertResponse = this.wifiWizard2.getConnectedSSID()
     };
     HomePage.prototype.connect = function (macAddress) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {

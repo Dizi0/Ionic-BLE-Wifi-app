@@ -31,6 +31,9 @@
     },
     "com.pylonproducts.wifiwizard": {
       "PACKAGE_NAME": "io.ionic.starter"
+    },
+    "cordova-plugin-hotspot": {
+      "PACKAGE_NAME": "io.ionic.starter"
     }
   },
   "dependent_plugins": {}

@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {BLE} from '@ionic-native/ble/ngx';
 import {AlertController} from '@ionic/angular';
-import { WifiWizard2 } from '@ionic-native/wifi-wizard-2/ngx';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +24,6 @@ export class HomePage {
   constructor(
       private ble: BLE ,
       public alertController: AlertController,
-      // private wifiWizard2: WifiWizard2
   ) {}
 
   ab2str(buf) {
@@ -100,7 +98,6 @@ export class HomePage {
     await alert.present();
   }
   getNetworks() {
-    // this.alertResponse = this.wifiWizard2.getConnectedSSID()
   }
 
   async connect(macAddress) {
