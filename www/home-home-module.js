@@ -139,7 +139,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button expand=\"full\"  color=\"primary\" (click)=\"getNetworks()\">Get Networks</ion-button>\r\n\r\n<ion-item>\r\n  {{alertResponse}}\r\n</ion-item>\r\n\r\n  <ion-item>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
+module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n  <ion-button expand=\"full\"  color=\"primary\" (click)=\"subcribeBLE()\">Get Networks</ion-button>\r\n\r\n<ion-item ngModel=\"{{alertResponse}}\">\r\n</ion-item>\r\n\r\n  <ion-item>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
 
 /***/ }),
 
@@ -179,6 +179,7 @@ var HomePage = /** @class */ (function () {
         this.deviceID = '';
         this.scanResult = '';
         this.devicesList = [];
+        this.wifiList = [];
         this.uuidConfig = {
             "deviceUUID": "27dc2bcf-6492-476a-b63a-4e419d417a9f",
             "serviceUUID": "c640efa6-489e-4694-bfed-73ce0fa15e77",
@@ -263,7 +264,12 @@ var HomePage = /** @class */ (function () {
             });
         });
     };
-    HomePage.prototype.getNetworks = function () {
+    HomePage.prototype.subcribeBLE = function (macAddress) {
+        var _this = this;
+        this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(function (buffer) {
+            var data = new TextDecoder().decode(buffer);
+            alert(data);
+        }, function (error) { return _this.alertResponse(error); });
     };
     HomePage.prototype.connect = function (macAddress) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {

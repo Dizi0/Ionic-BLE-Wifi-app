@@ -9,10 +9,9 @@
 <ion-content>
 
   <ion-button expand="full" id="disableMe" (click)="scan()">Scan bluetooth</ion-button>
-  <ion-button expand="full"  color="primary" (click)="getNetworks()">Get Networks</ion-button>
+  <ion-button expand="full"  color="primary" (click)="subcribeBLE()">Get Networks</ion-button>
 
-<ion-item>
-  {{alertResponse}}
+<ion-item ngModel="{{alertResponse}}">
 </ion-item>
 
   <ion-item>

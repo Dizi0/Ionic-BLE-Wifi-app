@@ -12,6 +12,7 @@ export class HomePage {
   public scanResult = '';
   public devicesList = [];
   public alertResponse : any;
+  public wifiList = [];
 
   public uuidConfig  = {
     "deviceUUID": "27dc2bcf-6492-476a-b63a-4e419d417a9f",
@@ -56,6 +57,7 @@ export class HomePage {
 
   async presentAlertPrompt(macAddress) {
     await this.ble.stopScan();
+
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Connect to your Wi-fi',
@@ -97,12 +99,20 @@ export class HomePage {
     });
     await alert.present();
   }
-  getNetworks() {
+  subcribeBLE(macAddress) {
+    this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
+        (buffer) => {
+          let data = new TextDecoder().decode(buffer);
+          alert(data)
+        },
+        (error) => this.alertResponse(error)
+    )
   }
 
   async connect(macAddress) {
     console.log('Connect');
     this.deviceID = macAddress;
+
     this.ble.connect(macAddress).subscribe(deviceData => {
       console.log(deviceData);
       this.presentAlertPrompt(macAddress).then(r =>
