@@ -103,7 +103,7 @@ export class HomePage {
     this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
         (buffer) => {
           let data = new TextDecoder().decode(buffer);
-          alert(data)
+          this.wifiList.push(data)
         },
         (error) => this.alertResponse(error)
     )
