@@ -13,6 +13,7 @@ export class HomePage {
   public devicesList = [];
   public alertResponse : any;
   public wifiList = [];
+  public inputs = [];
 
   public uuidConfig  = {
     "deviceUUID": "27dc2bcf-6492-476a-b63a-4e419d417a9f",
@@ -55,7 +56,33 @@ export class HomePage {
 
   }
 
-  async presentAlertPrompt(macAddress) {
+  async pickWifi() {
+    let optionsArr = [];
+    let pickWifiAlert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Select your Wi-Fi network',
+      inputs: this.inputs,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.disconnect(this.deviceID)
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: (alertData) => {
+            this.pickWifi()
+          }
+        }
+      ]
+    });
+    await pickWifiAlert.present();
+  }
+
+  async connectToWifi(macAddress) {
     await this.ble.stopScan();
 
     const alert = await this.alertController.create({
@@ -97,13 +124,24 @@ export class HomePage {
         }
       ]
     });
-    await alert.present();
+    if (alert.inputs.length >= 2){
+      await alert.present();
+
+    }
   }
-  subcribeBLE(macAddress) {
+
+  getWifiList() {
     this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
         (buffer) => {
-          let data = new TextDecoder().decode(buffer);
-          this.wifiList.push(data)
+          this.inputs.push({
+            name: 'ssid',
+            type: 'radio',
+            label: new TextDecoder().decode(buffer),
+            value: new TextDecoder().decode(buffer),
+            checked: false
+          },)
+
+          this.wifiList.push(new TextDecoder().decode(buffer))
         },
         (error) => this.alertResponse(error)
     )
@@ -114,8 +152,12 @@ export class HomePage {
     this.deviceID = macAddress;
 
     this.ble.connect(macAddress).subscribe(deviceData => {
+      this.getWifiList()
       console.log(deviceData);
-      this.presentAlertPrompt(macAddress).then(r =>
+      setTimeout(function(){
+        console.log("Ready")
+      }, 2000);
+      this.pickWifi().then(r =>
           console.log("Login alert")
       )
     });
