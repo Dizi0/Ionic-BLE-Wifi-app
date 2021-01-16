@@ -1542,7 +1542,7 @@ module.exports = {
     *      openExternal: boolean              => open in a new browser (default=false)
     *
     * Example:
-    *      navigator.app.loadUrl("http://server/SpectR Display/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
+    *      navigator.app.loadUrl("http://server/RPI Ble Connector/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
     */
     loadUrl:function(url, props) {
         exec(null, null, APP_PLUGIN_NAME, "loadUrl", [url, props]);

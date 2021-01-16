@@ -57,7 +57,7 @@ export class HomePage {
   }
 
   async pickWifi() {
-    let optionsArr = [];
+    let count = 0;
     let pickWifiAlert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Select your Wi-Fi network',
@@ -74,20 +74,23 @@ export class HomePage {
         }, {
           text: 'Ok',
           handler: (alertData) => {
-            this.pickWifi()
+            this.connectToWifi(alertData)
           }
         }
       ]
     });
+    // if(pickWifiAlert.inputs.length >= 1){
+    //   alert(this.inputs)
     await pickWifiAlert.present();
+    // }
   }
 
-  async connectToWifi(macAddress) {
+  async connectToWifi(ssid) {
     await this.ble.stopScan();
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Connect to your Wi-fi',
+      header: 'Connect to ' + ssid,
       inputs: [
         {
           name: 'password',
@@ -111,7 +114,7 @@ export class HomePage {
             if (this.ble.isConnected)
             {
               console.log("WE ARE CURRENTLY CONNECTED");
-              let payload = this.str2ab('freebox_57a2a7|' +alertData.password);
+              let payload = this.str2ab(ssid + '|' + alertData.password);
 
               this.ble.write(
                   this.deviceID,
@@ -124,10 +127,7 @@ export class HomePage {
         }
       ]
     });
-    if (alert.inputs.length >= 2){
-      await alert.present();
-
-    }
+    await alert.present();
   }
 
   getWifiList() {
@@ -154,12 +154,15 @@ export class HomePage {
     this.ble.connect(macAddress).subscribe(deviceData => {
       this.getWifiList()
       console.log(deviceData);
-      setTimeout(function(){
-        console.log("Ready")
-      }, 2000);
-      this.pickWifi().then(r =>
-          console.log("Login alert")
-      )
+      // setTimeout(function(){
+      //   console.log("Ready")
+      // }, 2000);
+      if(this.inputs.length >= 2) {
+        this.pickWifi().then(r =>
+            console.log("Login alert")
+        )
+
+      }
     });
   }
 
