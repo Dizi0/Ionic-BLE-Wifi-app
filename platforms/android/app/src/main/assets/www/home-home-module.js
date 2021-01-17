@@ -139,7 +139,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      SpectR Manager\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n<!--  <ion-button expand=\"full\"  color=\"primary\" (click)=\"getWifiList()\">Get Networks</ion-button>-->\r\n<!--  <ion-button expand=\"full\"  color=\"primary\" (click)=\"pickWifi()\">Get Networks</ion-button>-->\r\n\r\n<ion-item ngModel=\"{{alertResponse}}\">\r\n</ion-item>\r\n\r\n  <ion-item>\r\n    <div *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n\r\n    </div>\r\n  </ion-item>\r\n\r\n</ion-content>"
+module.exports = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-title>\r\n      Bluetooth Wifier\r\n    </ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n\r\n  <ion-button expand=\"full\" id=\"disableMe\" (click)=\"scan()\">Scan bluetooth</ion-button>\r\n\r\n<ion-item ngModel=\"{{alertResponse}}\"></ion-item>\r\n\r\n    <ng-container *ngFor=\"let device of devicesList\">\r\n      <ion-card *ngIf=\"device.name\">\r\n        <ion-card-header>\r\n          <ion-img src=\"https://avatars1.githubusercontent.com/u/8389284?s=400&v=4\" width=\"50%\"></ion-img>\r\n          <ion-card-subtitle>{{device.name}}</ion-card-subtitle>\r\n          <ion-card-title>{{device.name}}</ion-card-title>\r\n        </ion-card-header>\r\n\r\n        <ion-card-content>\r\n          <ion-button expand=\"full\" color=\"success\" (click)=\"connect(device.id)\">Connect</ion-button>\r\n          <ion-button expand=\"full\" color=\"danger\" (click)=\"disconnect(device.id)\">Disconnect</ion-button>\r\n        </ion-card-content>\r\n      </ion-card>\r\n    </ng-container>\r\n\r\n</ion-content>"
 
 /***/ }),
 
@@ -172,10 +172,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var HomePage = /** @class */ (function () {
-    function HomePage(ble, alertController) {
+    function HomePage(ble, alertController, toastController) {
         this.ble = ble;
         this.alertController = alertController;
+        this.toastController = toastController;
         this.deviceID = '';
         this.scanResult = '';
         this.devicesList = [];
@@ -189,6 +191,15 @@ var HomePage = /** @class */ (function () {
             "notificationUUID": "8fa7b756-4b3f-43bf-bd15-613b04025d72"
         };
     }
+    HomePage.prototype.removeDups = function (names) {
+        var unique = {};
+        names.forEach(function (i) {
+            if (!unique[i]) {
+                unique[i] = true;
+            }
+        });
+        return Object.keys(unique);
+    };
     HomePage.prototype.ab2str = function (buf) {
         return String.fromCharCode.apply(null, new Uint16Array(buf));
     };
@@ -202,7 +213,9 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.scan = function () {
         var _this = this;
+        this.wifiList = [];
         document.getElementById("disableMe").disabled = true;
+        this.presentToast('Scanning ...').then(function (r) { return console.log('Scanning ...'); });
         this.scanResult = '';
         this.devicesList = [];
         var devices = [];
@@ -217,12 +230,12 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.pickWifi = function () {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
-            var count, pickWifiAlert;
+            var pickWifiAlert;
             var _this = this;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        count = 0;
+                        this.removeDups(this.inputs);
                         return [4 /*yield*/, this.alertController.create({
                                 cssClass: 'my-custom-class',
                                 header: 'Select your Wi-Fi network',
@@ -246,12 +259,27 @@ var HomePage = /** @class */ (function () {
                             })];
                     case 1:
                         pickWifiAlert = _a.sent();
-                        // if(pickWifiAlert.inputs.length >= 1){
-                        //   alert(this.inputs)
                         return [4 /*yield*/, pickWifiAlert.present()];
                     case 2:
-                        // if(pickWifiAlert.inputs.length >= 1){
-                        //   alert(this.inputs)
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    HomePage.prototype.presentToast = function (message) {
+        return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
+            var toast;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.toastController.create({
+                            message: message,
+                            duration: 2000
+                        })];
+                    case 1:
+                        toast = _a.sent();
+                        return [4 /*yield*/, toast.present()];
+                    case 2:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -293,6 +321,13 @@ var HomePage = /** @class */ (function () {
                                                 console.log("WE ARE CURRENTLY CONNECTED");
                                                 var payload = _this.str2ab(ssid + '|' + alertData.password);
                                                 _this.ble.write(_this.deviceID, _this.uuidConfig.serviceUUID, _this.uuidConfig.writeCharacteristicWriteUUID, payload);
+                                                _this.ble.read(_this.deviceID, _this.uuidConfig.serviceUUID, _this.uuidConfig.readStatusUUID).then(function (data) {
+                                                    var status = JSON.parse(new TextDecoder().decode(data));
+                                                    if (status.status !== "Success") {
+                                                        _this.presentToast('Wrong password');
+                                                        alert.present();
+                                                    }
+                                                });
                                             }
                                         }
                                     }
@@ -321,6 +356,8 @@ var HomePage = /** @class */ (function () {
             _this.wifiList.push(new TextDecoder().decode(buffer));
         }, function (error) { return _this.alertResponse(error); });
     };
+    HomePage.prototype.debug = function () {
+    };
     HomePage.prototype.connect = function (macAddress) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
             var _this = this;
@@ -330,9 +367,6 @@ var HomePage = /** @class */ (function () {
                 this.ble.connect(macAddress).subscribe(function (deviceData) {
                     _this.getWifiList();
                     console.log(deviceData);
-                    // setTimeout(function(){
-                    //   console.log("Ready")
-                    // }, 2000);
                     if (_this.inputs.length >= 2) {
                         _this.pickWifi().then(function (r) {
                             return console.log("Login alert");
@@ -353,6 +387,9 @@ var HomePage = /** @class */ (function () {
                         return [4 /*yield*/, this.ble.disconnect(macAddress)];
                     case 1:
                         x = _a.sent();
+                        return [4 /*yield*/, this.presentToast('Disconnected')];
+                    case 2:
+                        _a.sent();
                         console.log(x);
                         this.deviceID = '';
                         return [2 /*return*/];
@@ -367,7 +404,8 @@ var HomePage = /** @class */ (function () {
             styles: [__webpack_require__(/*! ./home.page.scss */ "./src/app/home/home.page.scss")]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_ionic_native_ble_ngx__WEBPACK_IMPORTED_MODULE_2__["BLE"],
-            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["AlertController"]])
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["AlertController"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["ToastController"]])
     ], HomePage);
     return HomePage;
 }());

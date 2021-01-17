@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      SpectR Manager
+      Bluetooth Wifier
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,17 +9,13 @@
 <ion-content>
 
   <ion-button expand="full" id="disableMe" (click)="scan()">Scan bluetooth</ion-button>
-<!--  <ion-button expand="full"  color="primary" (click)="getWifiList()">Get Networks</ion-button>-->
-<!--  <ion-button expand="full"  color="primary" (click)="pickWifi()">Get Networks</ion-button>-->
 
-<ion-item ngModel="{{alertResponse}}">
-</ion-item>
+<ion-item ngModel="{{alertResponse}}"></ion-item>
 
-  <ion-item>
-    <div *ngFor="let device of devicesList">
+    <ng-container *ngFor="let device of devicesList">
       <ion-card *ngIf="device.name">
         <ion-card-header>
-          <ion-img src="https://upload.wikimedia.org/wikipedia/fr/3/3b/Raspberry_Pi_logo.svg"></ion-img>
+          <ion-img src="https://avatars1.githubusercontent.com/u/8389284?s=400&v=4" width="50%"></ion-img>
           <ion-card-subtitle>{{device.name}}</ion-card-subtitle>
           <ion-card-title>{{device.name}}</ion-card-title>
         </ion-card-header>
@@ -29,8 +25,6 @@
           <ion-button expand="full" color="danger" (click)="disconnect(device.id)">Disconnect</ion-button>
         </ion-card-content>
       </ion-card>
-
-    </div>
-  </ion-item>
+    </ng-container>
 
 </ion-content>
