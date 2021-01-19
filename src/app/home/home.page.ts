@@ -164,6 +164,7 @@ export class HomePage {
     }
 
     getWifiList() {
+        this.inputs = []
         this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
             (buffer) => {
                 this.inputs.push({
@@ -172,20 +173,16 @@ export class HomePage {
                     label: new TextDecoder().decode(buffer),
                     value: new TextDecoder().decode(buffer),
                     checked: false
-                },)
+                })
                 this.wifiList.push(new TextDecoder().decode(buffer))
             },
             (error) => this.alertResponse(error)
         )
     }
 
-    debug(){
-    }
-
     async connect(macAddress) {
         console.log('Connect');
         this.deviceID = macAddress;
-
         this.ble.connect(macAddress).subscribe(deviceData => {
             this.getWifiList()
             console.log(deviceData);
