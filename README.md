@@ -1,4 +1,4 @@
-# Ionic BLE Wifi connector for RPI
+# Ionic BLE Wifi connector
 
 Ionic BLE Wifi connector is an hybrid phone app designed to help you connect your RPI (or any linux device with bluetooth enabled) to a Wi-Fi Network.
 
