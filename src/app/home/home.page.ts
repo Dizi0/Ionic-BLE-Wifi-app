@@ -163,34 +163,41 @@ export class HomePage {
         await alert.present();
     }
 
-    getWifiList() {
-        this.inputs = []
-        this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
-            (buffer) => {
-                this.inputs.push({
-                    name: 'ssid',
-                    type: 'radio',
-                    label: new TextDecoder().decode(buffer),
-                    value: new TextDecoder().decode(buffer),
-                    checked: false
-                })
-                this.wifiList.push(new TextDecoder().decode(buffer))
-            },
-            (error) => this.alertResponse(error)
-        )
-    }
-
     async connect(macAddress) {
+        this.wifiList = [];
+        this.inputs = [];
+        let ssid = '';
+        let wificounter = 0;
+
         console.log('Connect');
         this.deviceID = macAddress;
         this.ble.connect(macAddress).subscribe(deviceData => {
-            this.getWifiList()
-            console.log(deviceData);
-            if(this.inputs.length >= 2) {
-                this.pickWifi().then(r =>
-                    console.log("Login alert")
-                )
-            }
+            this.ble.startNotification(this.deviceID, this.uuidConfig.serviceUUID, this.uuidConfig.notificationUUID).subscribe(
+                (buffer) => {
+                    ssid = new TextDecoder().decode(buffer)
+                    this.wifiList.push(ssid)
+                    if(ssid === "END"){
+                        this.wifiList.pop()
+                        this.wifiList.shift()
+                        while(wificounter < this.wifiList.length){
+                            this.inputs.push({
+                                name: 'ssid',
+                                type: 'radio',
+                                label: this.wifiList[wificounter],
+                                value: this.wifiList[wificounter],
+                                checked: false
+                            });
+                            wificounter++
+                        }
+                        if(this.wifiList.length >= 2) {
+                            this.pickWifi().then(r =>
+                                console.log('Login alert')
+                            );
+                        }
+                    }
+                },
+                (error) => this.alertResponse(error)
+            )
         });
     }
 
